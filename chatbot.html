@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #0b0f29, #1f2652); /* Blue gradient background */
+            color: #fff; /* White text for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative; /* Allow absolute positioning */
+        }
+
+        /* Back button positioning */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #0b0f29;
+            color: #ffffff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-button:hover {
+            background-color: #1f2652;
+        }
+
+        /* Chat container styling */
+        .chat-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #0b0f29;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input {
+            color: #333;
+        }
+
+        button {
+            background-color: #0b0f29;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1f2652;
+        }
+
+        #response {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <button class="back-button" onclick="goBack()">Back</button>
+
+    <div class="chat-container">
+        <h1>Ask me about a topic!</h1>
+        
+        <!-- Topic input -->
+        <input type="text" id="topicInput" placeholder="Enter a topic" />
+
+        <button onclick="getChatbotResponse()">Get Data</button>
+        
+        <p id="response"></p>
+    </div>
+
+    <script>
+        // Function to go back to the previous page
+        function goBack() {
+            window.history.back();
+        }
+
+        // Function to get the description based on the entered topic
+        function getChatbotResponse() {
+            const topic = document.getElementById("topicInput").value.trim();
+            const responseElement = document.getElementById("response");
+
+            if (!topic) {
+                responseElement.textContent = "Please enter a topic.";
+                return;
+            }
+
+            let description = "";
+            let topicFound = true;
+
+            switch (topic.toLowerCase()) {
+                case "solar system":
+                    description = "The Solar System consists of the Sun and the objects that orbit it, including planets like Earth.";
+                    break;
+                case "lion":
+                    description="The lion is a large cat of the genus Panthera, native to Africa and India. It has a muscular, broad-chested body; a short, rounded head; round ears; and a dark, hairy tuft at the tip of its tail. It is sexually dimorphic; adult male lions are larger than females and have a prominent mane.";
+                    break;
+                case "body parts":
+                    description = "The human body is made up of different systems like the circulatory, digestive, and respiratory systems, each with distinct body parts.";
+                    break;
+                case "water cycle":
+                    description = "The water cycle describes how water moves through the Earth's atmosphere, including processes like evaporation, condensation, and precipitation.";
+                    break;
+                default:
+                    description = "";
+                    topicFound = false;
+            }
+
+            if (topicFound) {
+                responseElement.textContent =` Here's what I know about ${topic}: ${description}`;
+                updateTopicCount(topic.toLowerCase()); // Call to update the JSON file
+            } else {
+                responseElement.textContent = "Sorry, I don't have information about that topic.";
+            }
+        }
+
+        // Function to update topic count in the backend
+        function updateTopicCount(topic) {
+            fetch("/update-topic-count", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ topic: topic })
+            }).catch(error => {
+                console.error("Error updating topic count:", error);
+            });
+        }
+    </script>
+</body>
+</html>

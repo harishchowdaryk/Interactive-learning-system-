@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube-Style Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container for the media content */
+        #mediaContainer {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 80%;
+            max-width: 1200px;
+        }
+
+        /* Back Button */
+        #backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #226ec5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #backButton:hover {
+            background-color: #16d5dc;
+        }
+
+        /* Video Section */
+        #videoSection {
+            flex: 2;
+            position: relative;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* Button Section */
+        #buttonWrapper {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #playButton, #pauseButton, #stopButton {
+            padding: 10px 20px;
+            background-color: #1976D2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        #playButton:hover, #pauseButton:hover, #stopButton:hover {
+            background-color: #1565C0;
+        }
+
+        /* Description Section */
+        #descriptionSection {
+            flex: 1;
+            margin-left: 30px;
+        }
+
+        #descriptionContainer {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-line;
+            text-align: justify;
+        }
+
+        #descriptionContainer h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        #audioPlayerWrapper {
+            margin-top: 20px;
+        }
+
+        #audioPlayer {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 15px;
+        }
+
+        /* Quiz Button */
+        #quizButton {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #quizButton:hover {
+            background-color: #45a049;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #mediaContainer {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #videoSection {
+                margin-bottom: 20px;
+            }
+
+            #descriptionSection {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Button -->
+    <button id="backButton" onclick="window.history.back();">Back</button>
+
+    <!-- Media Container -->
+    <div id="mediaContainer">
+        <!-- Video Section -->
+        <div id="videoSection">
+            <video id="videoPlayer" controls></video>
+        </div>
+
+        <!-- Description Section -->
+        <div id="descriptionSection">
+            <div id="descriptionContainer"></div>
+            <!-- Audio Player -->
+            <div id="audioPlayerWrapper">
+                <audio id="audioPlayer" controls></audio>
+            </div>
+            <!-- Play, Pause, and Stop Buttons -->
+            <div id="buttonWrapper">
+                <button id="playButton">Play</button>
+                <button id="pauseButton" style="display: none;">Pause</button>
+                <button id="stopButton" style="display: none;">Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Take Quiz Button -->
+    <button id="quizButton" onclick="takeQuiz()">Take Quiz</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoUrl = urlParams.get("video");
+            const audioUrl = urlParams.get("audio");
+            const description = urlParams.get("description");
+
+            // Set video and audio sources
+            const videoPlayer = document.getElementById("videoPlayer");
+            const audioPlayer = document.getElementById("audioPlayer");
+            const playButton = document.getElementById("playButton");
+            const pauseButton = document.getElementById("pauseButton");
+            const stopButton = document.getElementById("stopButton");
+            const quizButton = document.getElementById("quizButton");
+
+            videoPlayer.src = decodeURIComponent(videoUrl);
+            audioPlayer.src = decodeURIComponent(audioUrl);
+
+            // Display description word by word
+            function showDescriptionWordByWord(text, element) {
+                let words = text.split(" ");
+                let index = 0;
+                element.innerHTML = "";  // Clear the element first
+                let interval = setInterval(() => {
+                    element.innerHTML += " " + words[index];
+                    index++;
+                    if (index === words.length) {
+                        clearInterval(interval);  // Stop after the last word
+                    }
+                }, 200);  // Change 200 to adjust the speed of word animation
+            }
+
+            // Show description word by word
+            const descriptionContainer = document.getElementById("descriptionContainer");
+            showDescriptionWordByWord(decodeURIComponent(description), descriptionContainer);
+
+            // Play the audio and video when the Play button is clicked
+            playButton.addEventListener("click", () => {
+                audioPlayer.play();
+                videoPlayer.style.display = "block";  // Show video player
+                videoPlayer.play();
+                playButton.style.display = "none";  // Hide Play button
+                pauseButton.style.display = "inline-block";  // Show Pause button
+                stopButton.style.display = "inline-block";  // Show Stop button
+            });
+
+            // Pause the audio and video when the Pause button is clicked
+            pauseButton.addEventListener("click", () => {
+                audioPlayer.pause();
+                videoPlayer.pause();
+                playButton.style.display = "inline-block";  // Show Play button
+                pauseButton.style.display = "none";  // Hide Pause button
+            });
+
+            // Stop the audio and video when the Stop button is clicked
+            stopButton.addEventListener("click", () => {
+                audioPlayer.pause();
+                videoPlayer.pause();
+                audioPlayer.currentTime = 0;  // Reset audio
+                videoPlayer.currentTime = 0;  // Reset video
+                playButton.style.display = "inline-block";  // Show Play button
+                stopButton.style.display = "none";  // Hide Stop button
+                pauseButton.style.display = "none";  // Hide Pause button
+                videoPlayer.style.display = "none";  // Hide video player
+            });
+
+            // Show the "Take Quiz" button after video ends
+            videoPlayer.addEventListener("ended", () => {
+                quizButton.style.display = "inline-block";  // Show Take Quiz button
+            });
+        });
+
+        // Redirect to quiz page
+        function takeQuiz() {
+            window.location.href = "quiz";  // Replace with the actual URL of your quiz page
+        }
+    </script>
+
+</body>
+</html>

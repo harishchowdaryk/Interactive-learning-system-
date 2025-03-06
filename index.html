@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Recognition</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <style>
+        /* General styling */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to bottom, #0b0f29, #0b0f29);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        /* Fixed "Go Back" button at the top */
+        .go-back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #0b0f29;
+            color: #ffffff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            z-index: 999;
+        }
+
+        .go-back-button:hover {
+            background-color: #0b0f29; /* Darker blue on hover */
+        }
+
+        /* Container styling */
+        .container {
+            background-color: #1f2652;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* Heading styling */
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #f2f2f5; /* A vibrant blue for the title */
+        }
+
+        /* Camera section */
+        .camera-section {
+            margin-bottom: 25px;
+        }
+
+        video {
+            width: 100%;
+            max-width: 600px;
+            border: 2px solid #0b0f29; /* Blue border for the video */
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #0b0f29; /* Blue button */
+            color: #ffffff;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0b0f29; /* Darker blue on hover */
+        }
+
+        /* Result section */
+        #result {
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        /* Video and audio players */
+        #videoPlayer,
+        #audioPlayer {
+            margin-top: 15px;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Links (for any dynamic elements) */
+        a {
+            color: #0b0f29;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Chatbot button styling */
+        .chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0b0f29;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .chatbot-button:hover {
+            background-color: #1f2652;
+        }
+    </style>
+</head>
+<body>
+    <!-- Go Back Button -->
+    <a href="javascript:history.back()">
+        <button class="go-back-button">Go Back</button>
+    </a>
+
+    <div class="container">
+        <h1>Image Recognition</h1>
+        
+        <!-- Camera Section -->
+        <div class="camera-section">
+            <video id="cameraFeed" autoplay></video>
+            <canvas id="captureCanvas" style="display:none;"></canvas>
+            <button id="captureButton" onclick="captureImage()">Capture Image</button>
+        </div>
+        
+        <!-- Result section -->
+        <div id="result">
+            <p id="matchMessage"></p>
+            <p id="description"></p> <!-- Description -->
+
+            <!-- Video player (hidden initially) -->
+            <video id="videoPlayer" width="900" controls style="display:none;">
+                <source id="videoSource" type="video/mp4">
+            </video>
+
+            <!-- Audio player (hidden initially) -->
+            <audio id="audioPlayer" controls style="display:none;">
+                <source id="audioSource" type="audio/mp3">
+            </audio>
+        </div>
+    </div>
+
+    <!-- Chatbot Button (Redirect to chatbot.html) -->
+    <a href="{{ url_for('chatbot') }}">
+        <button class="chatbot-button">💬</button>
+    </a>
+    
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
